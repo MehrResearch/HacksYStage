@@ -23,23 +23,26 @@ Adafruit_DotStar matrix(DOTSTAR_NUMPIXELS, MOSI, SCK, DOTSTAR_BRG);
 // Commands
 
 /// @brief Turn on onboard LED
-void led_on() {
+void led_on()
+{
   digitalWrite(LED_BUILTIN, HIGH);
 }
 
-
 /// @brief Turn off onboard LED
-void led_off() {
+void led_off()
+{
   digitalWrite(LED_BUILTIN, LOW);
 }
 
 /// @brief Take n steps in the x direction
 /// @param dir Direction to step in
 /// @param n Number of steps
-void x_step(bool dir, int n) {
+void x_step(bool dir, int n)
+{
   digitalWrite(X_DIR, dir);
   digitalWrite(X_ENABLE, HIGH);
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++)
+  {
     digitalWrite(X_STEP, HIGH);
     delayMicroseconds(1000);
     digitalWrite(X_STEP, LOW);
@@ -51,10 +54,12 @@ void x_step(bool dir, int n) {
 /// @brief Take n steps in the y direction
 /// @param dir Direction to step in
 /// @param n Number of steps
-void y_step(bool dir, int n) {
+void y_step(bool dir, int n)
+{
   digitalWrite(Y_DIR, dir);
   digitalWrite(Y_ENABLE, HIGH);
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++)
+  {
     digitalWrite(Y_STEP, HIGH);
     delayMicroseconds(1000);
     digitalWrite(Y_STEP, LOW);
@@ -64,19 +69,21 @@ void y_step(bool dir, int n) {
 }
 
 /// @brief Turn on DotStar matrix backlight
-void backlight_on() {
+void backlight_on()
+{
   matrix.fill(0x00050505);
   matrix.show();
 }
 
 /// @brief Turn off DotStar matrix backlight
-void backlight_off() {
+void backlight_off()
+{
   matrix.fill(0x00000000);
   matrix.show();
 }
 
-
-void setup() {
+void setup()
+{
   // put your setup code here, to run once:
   pinMode(LED_BUILTIN, OUTPUT);
 
@@ -96,8 +103,8 @@ void setup() {
   Serial.println("Serial ready");
 }
 
-
-void debug_loop() {
+void debug_loop()
+{
   led_on();
   x_step(true, 2000);
   x_step(false, 2000);
@@ -106,43 +113,57 @@ void debug_loop() {
   y_step(false, 2000);
 }
 
-void handle_command(String cmd) {
-  // commands:
-  // x_step +/-n: x_step(true/false, n)
-  // y_step +/-n: y_step(true/false, n)
-  // led_on: led_on()
-  // led_off: led_off()
-  // backlight_on: backlight_on()
-  // backlight_off: backlight_off()
-  #ifdef DEBUG
+void handle_command(String cmd)
+{
+// commands:
+// x_step +/-n: x_step(true/false, n)
+// y_step +/-n: y_step(true/false, n)
+// led_on: led_on()
+// led_off: led_off()
+// backlight_on: backlight_on()
+// backlight_off: backlight_off()
+#ifdef DEBUG
   Serial.print("Received: ");
   Serial.println(cmd);
-  #endif
+#endif
 
-  if (cmd.startsWith("x_step")) {
+  if (cmd.startsWith("x_step"))
+  {
     // x_step +/-n
     int n = cmd.substring(7).toInt();
     Serial.print("n: ");
     Serial.println(n);
     x_step(n > 0, abs(n));
-  } else if (cmd.startsWith("y_step")) {
+  }
+  else if (cmd.startsWith("y_step"))
+  {
     // y_step +/-n
     int n = cmd.substring(7).toInt();
     y_step(n > 0, abs(n));
-  } else if (cmd == "led_on") {
+  }
+  else if (cmd == "led_on")
+  {
     led_on();
-  } else if (cmd == "led_off") {
+  }
+  else if (cmd == "led_off")
+  {
     led_off();
-  } else if (cmd == "backlight_on") {
+  }
+  else if (cmd == "backlight_on")
+  {
     backlight_on();
-  } else if (cmd == "backlight_off") {
+  }
+  else if (cmd == "backlight_off")
+  {
     backlight_off();
   }
 }
 
-void loop() {
+void loop()
+{
   // Read and execute a command
-  if (Serial.available() > 0) {
+  if (Serial.available() > 0)
+  {
     String cmd = Serial.readStringUntil('\r');
     handle_command(cmd);
   }
