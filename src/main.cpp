@@ -17,6 +17,10 @@
 #define Y_STEP 11
 #define Y_DIR 12
 
+// delay between enabling stepper drivers and taking steps
+#define ENABLE_DELAY_US 500
+#define STEPPER_PULSE_US 1000
+
 bool dir = HIGH;
 Adafruit_DotStar matrix(DOTSTAR_NUMPIXELS, MOSI, SCK, DOTSTAR_BRG);
 
@@ -40,15 +44,16 @@ void led_off()
 void x_step(bool dir, int n)
 {
   digitalWrite(X_DIR, dir);
-  digitalWrite(X_ENABLE, HIGH);
+  digitalWrite(X_ENABLE, LOW);
+  delay(ENABLE_DELAY_US);
   for (int i = 0; i < n; i++)
   {
     digitalWrite(X_STEP, HIGH);
-    delayMicroseconds(1000);
+    delayMicroseconds(STEPPER_PULSE_US);
     digitalWrite(X_STEP, LOW);
-    delayMicroseconds(1000);
+    delayMicroseconds(STEPPER_PULSE_US);
   }
-  digitalWrite(X_ENABLE, LOW);
+  digitalWrite(X_ENABLE, HIGH);
 }
 
 /// @brief Take n steps in the y direction
@@ -57,15 +62,16 @@ void x_step(bool dir, int n)
 void y_step(bool dir, int n)
 {
   digitalWrite(Y_DIR, dir);
-  digitalWrite(Y_ENABLE, HIGH);
+  digitalWrite(Y_ENABLE, LOW);
+  delay(ENABLE_DELAY_US);
   for (int i = 0; i < n; i++)
   {
     digitalWrite(Y_STEP, HIGH);
-    delayMicroseconds(1000);
+    delayMicroseconds(STEPPER_PULSE_US);
     digitalWrite(Y_STEP, LOW);
-    delayMicroseconds(1000);
+    delayMicroseconds(STEPPER_PULSE_US);
   }
-  digitalWrite(Y_ENABLE, LOW);
+  digitalWrite(Y_ENABLE, HIGH);
 }
 
 /// @brief Turn on DotStar matrix backlight
@@ -90,10 +96,12 @@ void setup()
   pinMode(X_ENABLE, OUTPUT);
   pinMode(X_STEP, OUTPUT);
   pinMode(X_DIR, OUTPUT);
+  digitalWrite(X_ENABLE, HIGH);
 
   pinMode(Y_ENABLE, OUTPUT);
   pinMode(Y_STEP, OUTPUT);
   pinMode(Y_DIR, OUTPUT);
+  digitalWrite(Y_ENABLE, HIGH);
 
   matrix.begin();
   matrix.show();
