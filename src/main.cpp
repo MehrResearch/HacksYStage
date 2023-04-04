@@ -131,14 +131,20 @@ void handle_command(String cmd)
   {
     // x_step +/-n
     int n = cmd.substring(7).toInt();
-    Serial.print("n: ");
-    Serial.println(n);
+    #ifdef DEBUG
+      Serial.print("axis: x; n: ");
+      Serial.println(n);
+    #endif
     x_step(n > 0, abs(n));
   }
   else if (cmd.startsWith("y_step"))
   {
     // y_step +/-n
     int n = cmd.substring(7).toInt();
+    #ifdef DEBUG
+      Serial.print("axis: y; n: ");
+      Serial.println(n);
+    #endif  
     y_step(n > 0, abs(n));
   }
   else if (cmd == "led_on")
