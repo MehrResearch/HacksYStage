@@ -75,9 +75,14 @@ void y_step(bool dir, int n)
 }
 
 /// @brief Turn on DotStar matrix backlight
-void backlight_on()
+void backlight_on(u8 r, u8 g, u8 b)
 {
-  matrix.fill(0x00050505);
+  u32 color = g;
+  color <<= 8;
+  color |= r;
+  color <<= 8;
+  color |= b;
+  matrix.fill(color);
   matrix.show();
 }
 
@@ -128,7 +133,7 @@ void handle_command(String cmd)
 // y_step +/-n: y_step(true/false, n)
 // led_on: led_on()
 // led_off: led_off()
-// backlight_on: backlight_on()
+// backlight_on r g b: backlight_on(r, g, b) (0 <= r, g, b <= 255)
 // backlight_off: backlight_off()
 #ifdef DEBUG
   Serial.print("Received: ");
@@ -163,9 +168,21 @@ void handle_command(String cmd)
   {
     led_off();
   }
-  else if (cmd == "backlight_on")
+  else if (cmd.startsWith("backlight_on"))
   {
-    backlight_on();
+    String rgb = cmd.substring(cmd.indexOf(' ') + 1);
+    u8 r = rgb.substring(0, rgb.indexOf(' ')).toInt();
+    u8 g = rgb.substring(rgb.indexOf(' ') + 1, rgb.lastIndexOf(' ')).toInt();
+    u8 b = rgb.substring(rgb.lastIndexOf(' ') + 1).toInt();
+    #ifdef DEBUG
+      Serial.print("r: ");
+      Serial.print(r);
+      Serial.print(" g: ");
+      Serial.print(g);
+      Serial.print(" b: ");
+      Serial.println(b);
+    #endif
+    backlight_on(r, g, b);
   }
   else if (cmd == "backlight_off")
   {
