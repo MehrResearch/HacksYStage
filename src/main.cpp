@@ -5,9 +5,6 @@
 #include <Adafruit_DotStar.h>
 
 #define DOTSTAR_NUMPIXELS 64
-// SCK, MOSI pins for Arduino Mega hardware SPI
-#define SCK 52
-#define MOSI 51
 
 #define X_ENABLE 7
 #define X_STEP 8
@@ -22,7 +19,7 @@
 #define STEPPER_PULSE_US 1000
 
 bool dir = HIGH;
-Adafruit_DotStar matrix(DOTSTAR_NUMPIXELS, MOSI, SCK, DOTSTAR_BRG);
+Adafruit_DotStar matrix(DOTSTAR_NUMPIXELS, DOTSTAR_BRG);
 
 // Commands
 
