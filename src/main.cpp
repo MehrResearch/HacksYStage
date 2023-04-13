@@ -18,8 +18,13 @@
 #define ENABLE_DELAY_US 500
 #define STEPPER_PULSE_US 1000
 
+// truncate long input to avoid OOM
+#define MAX_CMD_LEN 64
+
 bool dir = HIGH;
 Adafruit_DotStar matrix(DOTSTAR_NUMPIXELS, DOTSTAR_BRG);
+
+String cmd = "";
 
 // Commands
 
@@ -132,11 +137,6 @@ void handle_command(String cmd)
 // led_off: led_off()
 // backlight_on r g b: backlight_on(r, g, b) (0 <= r, g, b <= 255)
 // backlight_off: backlight_off()
-#ifdef DEBUG
-  Serial.print("Received: ");
-  Serial.println(cmd);
-#endif
-
   if (cmd.startsWith("x_step"))
   {
     // x_step +/-n
@@ -189,11 +189,21 @@ void handle_command(String cmd)
 
 void loop()
 {
-  // Read and execute a command
-  if (Serial.available() > 0)
+  // Read and echo each character until \r
+  while (Serial.available())
   {
-    String cmd = Serial.readStringUntil('\r');
-    handle_command(cmd);
+    char c = Serial.read();
+    Serial.print(c);
+    if (c == '\r' || cmd.length() > MAX_CMD_LEN)
+    {
+      Serial.println("");
+      handle_command(cmd);
+      cmd = "";
+    }
+    else
+    {
+      cmd += c;
+    }
   }
 }
 
