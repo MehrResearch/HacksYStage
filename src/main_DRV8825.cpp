@@ -6,12 +6,12 @@
 
 #define DOTSTAR_NUMPIXELS 64
 
-#define X_ENABLE 7
-#define X_STEP 8
-#define X_DIR 9
+#define X_ENABLE 6
+#define X_STEP 7
+#define X_DIR 8
 
-#define Y_ENABLE 10
-#define Y_STEP 11
+#define Y_ENABLE 9
+#define Y_STEP 10
 #define Y_DIR 12
 
 // delay between enabling stepper drivers and taking steps
@@ -22,7 +22,7 @@
 #define MAX_CMD_LEN 64
 
 bool dir = HIGH;
-Adafruit_DotStar matrix(DOTSTAR_NUMPIXELS, DOTSTAR_BRG);
+Adafruit_DotStar matrix(DOTSTAR_NUMPIXELS, DOTSTAR_BRG, &SPI);
 
 String cmd = "";
 
@@ -185,6 +185,10 @@ void handle_command(String cmd)
   {
     backlight_off();
   }
+  else {
+    Serial.print("Unknown command: ");
+    Serial.println(cmd);
+  }
 }
 
 void loop()
@@ -197,6 +201,7 @@ void loop()
     if (c == '\r' || cmd.length() > MAX_CMD_LEN)
     {
       Serial.println("");
+      cmd.trim();
       handle_command(cmd);
       cmd = "";
     }
