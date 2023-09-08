@@ -21,7 +21,6 @@
 // truncate long input to avoid OOM
 #define MAX_CMD_LEN 64
 
-bool dir = HIGH;
 Adafruit_DotStar matrix(DOTSTAR_NUMPIXELS, DOTSTAR_BRG, &SPI);
 
 String cmd = "";
