@@ -15,7 +15,7 @@
 #define Y_DIR 12
 
 // delay between enabling stepper drivers and taking steps
-#define ENABLE_DELAY_US 500
+#define ENABLE_DELAY_MS 50
 #define STEPPER_PULSE_US 1000
 
 // truncate long input to avoid OOM
@@ -47,7 +47,7 @@ void x_step(bool dir, int n)
 {
   digitalWrite(X_DIR, dir);
   digitalWrite(X_ENABLE, LOW);
-  delay(ENABLE_DELAY_US);
+  delay(ENABLE_DELAY_MS);
   for (int i = 0; i < n; i++)
   {
     digitalWrite(X_STEP, HIGH);
@@ -55,6 +55,7 @@ void x_step(bool dir, int n)
     digitalWrite(X_STEP, LOW);
     delayMicroseconds(STEPPER_PULSE_US);
   }
+  delay(ENABLE_DELAY_MS);
   digitalWrite(X_ENABLE, HIGH);
 }
 
@@ -65,7 +66,7 @@ void y_step(bool dir, int n)
 {
   digitalWrite(Y_DIR, dir);
   digitalWrite(Y_ENABLE, LOW);
-  delay(ENABLE_DELAY_US);
+  delay(ENABLE_DELAY_MS);
   for (int i = 0; i < n; i++)
   {
     digitalWrite(Y_STEP, HIGH);
@@ -73,6 +74,7 @@ void y_step(bool dir, int n)
     digitalWrite(Y_STEP, LOW);
     delayMicroseconds(STEPPER_PULSE_US);
   }
+  delay(ENABLE_DELAY_MS);
   digitalWrite(Y_ENABLE, HIGH);
 }
 
@@ -113,8 +115,8 @@ void setup()
   matrix.begin();
   matrix.show();
 
-  Serial.begin(9600);
-  Serial.setTimeout(10000);
+  Serial.begin(115200);
+  Serial.setTimeout(100);
   Serial.println("Serial ready");
 }
 
@@ -197,6 +199,30 @@ void loop()
   while (Serial.available())
   {
     char c = Serial.read();
+
+    //detect arrow keys
+    if (c == 27)
+    {
+      char seq[2];
+      Serial.readBytes(seq, 2);
+      switch (seq[1])
+      {
+      case 'A':
+        x_step(false, 16);
+        break;
+      case 'B':
+        x_step(true, 16);
+        break;
+      case 'C':
+        y_step(true, 16);
+        break;
+      case 'D':
+        y_step(false, 16);
+        break;
+      }
+      continue;
+    }
+
     Serial.print(c);
     if (c == '\r' || cmd.length() > MAX_CMD_LEN)
     {
